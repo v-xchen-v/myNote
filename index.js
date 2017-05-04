@@ -40,18 +40,6 @@ app.use(bodyParser.urlencoded({extended:true}));
 app.get('/register.html',function(req,res)
 {
     res.sendFile(__dirname+"/"+"register.html");
-    //use callback function get usernamedata from collection.findOne
-//    notedbmodel.findOne({username:username},function(err,usern){
-//	if(err){
-//	    console.log(err);
-//	    return res.redirect("/register.html");
-//	}
-//	if(usern)
-//	{
-//	    console.log("username:"+username+" have existed!");
-//	    return res.redirect("/register.html");
-//	}
-//    });
 });
 
 // login part
@@ -61,7 +49,7 @@ app.get('/login.html',function(req,res)
 });
 
 // get data from register.html to db
-app.get('/dbprocess_get',function(req,res)
+app.get('/register_process_get',function(req,res)
 {
     //register data output to mongodb
     response = {
@@ -74,19 +62,55 @@ app.get('/dbprocess_get',function(req,res)
     var username = req.query.username;
     var password = req.query.password;
     var repeatpasswd = req.query.repeatpasswd;
-    var newUser = new notedbmodel({username:username,password:password});
-    console.log("new user:"+username+" "+password);
-    newUser.save();
-    return res.redirect("/");
+   
+    //check repeat
+    
+    //use callback function get usernamedata from collection.findOne
+    notedbmodel.findOne({username:username},function(err,usern){
+	//if(err){
+	//    console.log(err);
+	//    return res.redirect("/register.html");
+	//}
+	if(usern)
+	{
+	    console.log("username:"+username+" have existed!");
+	    return res.redirect("/register.html");
+	}
+  	//because the async of nodejs the insert part should be put in this {},if after this{},program will process this part           //so that findone part can not get callback data
+        //insert a new user info
+        var newUser = new notedbmodel({username:username,password:password});
+        console.log("new user:"+username+" "+password);
+        newUser.save();
+        return res.redirect("/");
+    });
 });
-app.get('/process_get',function(req,res)
+app.get('/login_process_get',function(req,res)
 {
     //login data output by json
     response= {
 	user_name:req.query.username,
 	passwd:req.query.password};
     console.log(response);
-    res.end(JSON.stringify(response));
+   // res.end(JSON.stringify(response));
+    var username = req.query.username;
+    var password = req.query.password;
+    notedbmodel.findOne({username:username},function(err,usern){
+	if(!usern)
+	{
+	    console.log("user don't exist");
+	}else
+	{
+	    if(usern.password == password)
+	    {
+		console.log("login in successfully!");
+		res.redirect("/");
+	    }else
+	    {
+		console.log("wrong password!");
+		res.redirect("/login.html");
+	    }
+	}
+    });
 });
 
 
