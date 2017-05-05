@@ -12,7 +12,19 @@ var noteSchema = new Schema({
     password : String,
     date : {type:Date,default:Date.now}
 });
+var contentSchema = new Schema(
+{
+    author : String,
+    title : String,
+    tag : String,
+    content : String,
+    date :{type:Date,default:Date.now}
+}
+);
 var notedbmodel = mongoose.model('notedbmodel',noteSchema);
+var contentdbmodel = mongoose.model('contentdbmodel',contentSchema);
+
+//insert data into db
 var notedb = new notedbmodel({username:'xchen',password:'123456'});
 console.log("usr:"+notedb.username+" passwd:"+notedb.password);
 notedb.save();
@@ -112,7 +124,18 @@ app.get('/login_process_get',function(req,res)
 	}
     });
 });
-
+app.get('/content_process_get',function(req,res){
+    var noteContent = new contentdbmodel({
+        title : req.query.title,
+	tag : req.query.tag,
+	content : req.query.content
+    });
+    console.log("title:"+noteContent.title);
+    console.log("tag:"+noteContent.tag);
+    console.log("content:"+noteContent.content);
+    noteContent.save();
+    console.log("save note successfully!");
+});
 
 //refect to main get require
 app.get('/',function(req,res)
@@ -137,7 +160,16 @@ app.get('/quit',function(req,res)
 app.get('/post',function(req,res)
 {
     console.log('post');
-    res.render('post',{title:'post'});
+    return res.sendFile(__dirname+"/"+"/post.html");
+    //res.render('post',{title:'post'});
+   // var noteContent = new contentdbmodel({
+//	title : req.query.title,
+//	content : req.query.title,
+ //	tag : req.query.tag
+   // });
+   // console.log("title:"+noteContent.title);
+   // console.log("tag:"+noteContent.tag);
+   // console.log("content:"+noteContent.content);
 });
 app.get('/detail/',function(req,res)
 {
