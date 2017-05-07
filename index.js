@@ -60,6 +60,25 @@ app.get('/login.html',function(req,res)
     res.sendFile(__dirname+"/"+"login.html");
 });
 
+app.get('/notelist',function(req,res){
+    contentdbmodel.find(function(err,notes){
+        if(err)
+	{
+	    return console.error(err);
+	}
+	if(!notes)
+	{
+	    console.log("contentdb is not exist");
+	    res.redirect(__dirname+"/");
+	}
+	else{
+            console.log(notes);
+	}
+	res.render('notelist',{title:'notelist',notes:notes});	
+    });
+   // res.render('notelist',{title:"notelist",notes:notes});
+    //res.sendFile(__dirname+"/"+"notelist.html");
+});
 // get data from register.html to db
 app.get('/register_process_get',function(req,res)
 {
@@ -128,11 +147,13 @@ app.get('/content_process_get',function(req,res){
     var noteContent = new contentdbmodel({
         title : req.query.title,
 	tag : req.query.tag,
-	content : req.query.content
+	content : req.query.content,
+	date : req.query.data
     });
     console.log("title:"+noteContent.title);
     console.log("tag:"+noteContent.tag);
     console.log("content:"+noteContent.content);
+    console.log("date:"+noteContent.date);
     noteContent.save();
     console.log("save note successfully!");
 });

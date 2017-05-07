@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+	<title><%= title %></title>
+    </head>
+    <body>
+	<%= title %>
+	<% for(var i=0;i<notes.length;i++){ %>
+	<tr>
+	    <br>
+	    <td><%= notes[i].title %></td>
+	    <td><%= notes[i].tag %></td>
+	    <td><%= notes[i].date %></td>
+ 	    </br>
+	</tr>
+	<% } %>
+    </body>
+</html>	
